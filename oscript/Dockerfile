@@ -9,6 +9,7 @@ ARG MONO_VERSION=6.12.0.122
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      ca-certificates \
       gnupg \
       dirmngr \
       wget \
