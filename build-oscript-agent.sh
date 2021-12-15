@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD $DOCKER_USERNAME
 
