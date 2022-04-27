@@ -4,24 +4,31 @@ ARG ONEC_USERNAME
 ARG ONEC_PASSWORD
 ARG ONEC_VERSION
 ENV installer_type=client
+ENV downloads=downloads/platform83/${ONEC_VERSION}
 
-COPY ./scripts/download.sh /download.sh
+COPY ./scripts/download_og.sh /download_og.sh
 
 WORKDIR /tmp
 
-RUN apk --no-cache add bash curl grep \
-  && chmod +x /download.sh \
-  && sync; /download.sh \
-  && for file in *.tar.gz; do tar -zxf "$file"; done \
-  && rm -rf *.tar.gz \
-  && rm ./*-thin-*.deb
+RUN apk --no-cache add bash curl grep tar \
+  && chmod +x /download_og.sh \
+  && sync; /download_og.sh \
+  && rm -rf downloads/platform83/${ONEC_VERSION}/*thin*.tar.gz \
+  && for file in ${downloads}/*.tar.gz; do tar -xzf "$file"; done \
+  && find . -name "*-thin-*.deb" -delete \
+  && rm -rf ${downloads}/*.*
+
 
 FROM ubuntu:18.04 as base
 
+ARG ONEC_VERSION
+ENV installer_type=client
 ARG nls_enabled=false
 ENV nls=$nls_enabled
 
-COPY --from=downloader /tmp/*.deb /tmp/
+COPY ./scripts/install.sh /install.sh
+COPY --from=downloader /tmp/*.* /tmp/
+WORKDIR /tmp
 
 RUN set -xe \
   && apt-get update \
@@ -31,13 +38,9 @@ RUN set -xe \
 WORKDIR /tmp
 
 SHELL ["/bin/bash", "-c"]
-RUN set -xe; \
-  if [ "$nls" = true ]; then \
-    dpkg -i 1c-enterprise*-{common,server}_*.deb; \
-    dpkg -i 1c-enterprise*-{common,client}*.deb; \
-  else \
-    dpkg -i 1c-enterprise*-{common,server,client}_*.deb; \
-  fi
+RUN ls . \
+  && chmod +x /install.sh \
+  && sync; /install.sh
 
 # create symlink to current 1c:enterprise directory
 COPY ./scripts/create-symlink-to-current-1cv8.sh /create-symlink-to-current-1cv8.sh
