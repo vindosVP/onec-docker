@@ -10,11 +10,16 @@ COPY ./scripts/download_og.sh /download_og.sh
 
 
 WORKDIR /tmp
+COPY ./distr ./${downloads}
+RUN rm ./${downloads}/.gitkeep
 
-RUN apk --no-cache add bash curl grep tar \
+RUN if [ -z "$(ls -A ${downloads})" ]; then \
+  apk --no-cache add bash curl grep tar \
   && chmod +x /download_og.sh \
-  && sync; /download_og.sh \
-  && rm -rf downloads/platform83/${ONEC_VERSION}/*full*.tar.gz \
+  && sync; /download_og.sh; \
+  fi
+
+RUN rm -rf downloads/platform83/${ONEC_VERSION}/*full*.tar.gz \
   && for file in ${downloads}/*.tar.gz; do tar -xzf "$file"; done \
   && rm -rf ${downloads}/*.*
 
