@@ -9,10 +9,16 @@ ENV downloads=downloads/platform83/${ONEC_VERSION}
 COPY ./scripts/download_og.sh /download_og.sh
 
 WORKDIR /tmp
-
-RUN apk --no-cache add bash curl grep tar \
+COPY ./distr ./${downloads}
+RUN rm ./${downloads}/.gitkeep \
+  && rm -rf ${downloads}/thin.client*.tar.gz \
+  && rm -rf ${downloads}/client*.tar.gz \
+  && rm -rf ${downloads}/1c_edt*.tar.gz \
+  && if [ -z "$(ls -A ${downloads})" ]; then \
+  apk --no-cache add bash curl grep tar \
   && set -x \
-  && sync; /download_og.sh \
+  && sync; /download_og.sh; \
+  fi \
   && rm -rf ${downloads}/*thin*.tar.gz \
   && ls ${downloads} \
   && for file in ${downloads}/*.tar.gz; do tar -xzf "$file"; done \
@@ -80,5 +86,5 @@ COPY ./server/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-EXPOSE 1540 1541 1560
+EXPOSE 1540 1541 1545 1560
 CMD ["ragent"]

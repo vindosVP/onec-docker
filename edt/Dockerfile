@@ -8,7 +8,7 @@ LABEL maintainer="Nikita Gryzlov <NikGryzlov@1bit.com>, FirstBit"
 
 ARG ONEC_USERNAME
 ARG ONEC_PASSWORD
-ARG EDT_VERSION=2020.2
+ARG EDT_VERSION=2021.3
 
 ENV installer_type=edt \
   ONEC_VERSION=${EDT_VERSION}
@@ -35,8 +35,15 @@ ARG downloads=downloads/developmenttools10/${ONEC_VERSION}
 ENV LANG ru_RU.UTF-8
 
 # Install EDT
-RUN chmod +x /download_og.sh \
-  && sync; /download_og.sh \
+COPY ./distr ./${downloads}
+RUN rm ./${downloads}/.gitkeep \
+  && rm -rf ${downloads}/server*.tar.gz \
+  && rm -rf ${downloads}/deb*.tar.gz \
+  && rm -rf ${downloads}/thin.client*.tar.gz \
+  && if [ -z "$(ls -A ${downloads})" ]; then \
+  chmod +x /download_og.sh \
+  && sync; /download_og.sh; \
+  fi \
   && ls ${downloads} \
   && for file in ${downloads}/*.tar.gz; do tar -zxf "$file"; done \
   && rm -rf ${downloads}/*.tar.gz \
