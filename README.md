@@ -66,6 +66,7 @@ $ docker-compose up -d
   - [gitsync](#gitsync)
   - [oscript](#oscript)
   - [vanessa-runner](#vanessa-runner)
+  - [EDT](#edt)
 
 ## Сервер
 [(Наверх)](#Оглавление)
@@ -194,4 +195,13 @@ docker build --build-arg DOCKER_USERNAME=${DOCKER_USERNAME} \
 docker build --build-arg DOCKER_USERNAME=${DOCKER_USERNAME} \
   -t ${DOCKER_USERNAME}/runner:1.7.0 \
   -f vanessa-runner/Dockerfile .
+```
+## EDT
+[(Наверх)](#Оглавление)
+```bash
+docker build --build-arg ONEC_USERNAME=${ONEC_USERNAME} \
+    --build-arg ONEC_PASSWORD=${ONEC_PASSWORD} \
+    --build-arg EDT_VERSION=${EDT_VERSION} \
+    -t ${DOCKER_USERNAME}/edt:${EDT_VERSION} \
+    -f edt/Dockerfile .
 ```

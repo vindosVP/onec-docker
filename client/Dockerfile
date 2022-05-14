@@ -10,9 +10,11 @@ COPY ./scripts/download_og.sh /download_og.sh
 
 WORKDIR /tmp
 COPY ./distr ./${downloads}
-RUN rm ./${downloads}/.gitkeep
-
-RUN if [ -z "$(ls -A ${downloads})" ]; then \
+RUN rm ./${downloads}/.gitkeep \
+  && rm -rf ${downloads}/deb*.tar.gz \
+  && rm -rf ${downloads}/thin.client*.tar.gz \
+  && rm -rf ${downloads}/1c_edt*.tar.gz \
+  && if [ -z "$(ls -A ${downloads})" ]; then \
   apk --no-cache add bash curl grep tar \
   && chmod +x /download_og.sh \
   && sync; /download_og.sh; \

@@ -8,12 +8,13 @@ ENV downloads=downloads/platform83/${ONEC_VERSION}
 
 COPY ./scripts/download_og.sh /download_og.sh
 
-
 WORKDIR /tmp
 COPY ./distr ./${downloads}
-RUN rm ./${downloads}/.gitkeep
-
-RUN if [ -z "$(ls -A ${downloads})" ]; then \
+RUN rm ./${downloads}/.gitkeep \
+  && rm -rf ${downloads}/thin.client*.tar.gz \
+  && rm -rf ${downloads}/client*.tar.gz \
+  && rm -rf ${downloads}/1c_edt*.tar.gz \
+  && if [ -z "$(ls -A ${downloads})" ]; then \
   apk --no-cache add bash curl grep tar \
   && set -x \
   && sync; /download_og.sh; \
