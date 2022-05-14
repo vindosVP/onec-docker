@@ -16,9 +16,8 @@ RUN if [ -z "$(ls -A ${downloads})" ]; then \
   apk --no-cache add bash curl grep tar \
   && chmod +x /download_og.sh \
   && sync; /download_og.sh; \
-  fi
-
-RUN rm -rf downloads/platform83/${ONEC_VERSION}/*thin*.tar.gz \
+  fi \
+  && rm -rf downloads/platform83/${ONEC_VERSION}/*thin*.tar.gz \
   && for file in ${downloads}/*.tar.gz; do tar -xzf "$file"; done \
   && find . -name "*-thin-*.deb" -delete \
   && rm -rf ${downloads}/*.*

@@ -17,9 +17,8 @@ RUN if [ -z "$(ls -A ${downloads})" ]; then \
   apk --no-cache add bash curl grep tar \
   && set -x \
   && sync; /download_og.sh; \
-  fi
-
-RUN rm -rf ${downloads}/*thin*.tar.gz \
+  fi \
+  && rm -rf ${downloads}/*thin*.tar.gz \
   && ls ${downloads} \
   && for file in ${downloads}/*.tar.gz; do tar -xzf "$file"; done \
   && rm -rf ${downloads}/*.*
