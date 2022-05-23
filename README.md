@@ -46,6 +46,12 @@ $ docker-compose up -d
 
 Вы можете использовать готовые дистрибутивы платформы, для этого достаточно разместить их в папке `distr`. Скрипты будут автоматически использовать их для сборки образа.
 
+## Как использовать nethasp.ini в Jenkins + Docker Swarm plugin
+
+- взять ваш файл nethasp.ini
+- создать из него docker config командой `docker config create nethasp.ini ./nethasp.ini`
+- в Jenkins, в настройках Docker Agent templates у соответствующих агентов в параметре Configs указать `nethasp.ini:/opt/1cv8/current/conf/nethasp.ini`  
+
 # Оглавление
 
 - [Описание](#описание)
@@ -53,6 +59,7 @@ $ docker-compose up -d
   - [Как сбилдить образы](#как-сбилдить-образы)
   - [Как запустить в docker-compose](#как-запустить-в-docker-compose)
   - [Как использовать готовые дистрибутивы](#как-использовать-готовые-дистрибутивы)
+  - [Как использовать nethasp.ini в Jenkins + Docker Swarm plugin](#как-использовать-nethaspini-в-jenkins--docker-swarm-plugin)
 - [Оглавление](#оглавление)
   - [Сервер](#сервер)
   - [Сервер с дополнительными языками](#сервер-с-дополнительными-языками)
