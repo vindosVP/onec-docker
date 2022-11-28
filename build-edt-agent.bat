@@ -11,7 +11,7 @@ if %ERRORLEVEL% neq 0 goto end
 if %NO_CACHE%=="true" (SET last_arg="--no-cache .") else (SET last_arg=".")
 
 set edt_version=%EDT_VERSION%
-set edt_escaped=%edt_version: /_=%
+set edt_escaped=%edt_version: =_%
 
 docker build ^
 	--pull ^
