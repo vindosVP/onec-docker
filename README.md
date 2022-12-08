@@ -10,8 +10,14 @@
 
 В терминале введите:
 
+Команда Linux:
 ```bash
+# для Linux
 $ cp .onec.env.example .onec.env
+```
+```batch
+:: для Windows
+copy .onec.env.bat.example env.bat
 ```
 
 Скорректируйте файл `.onec.env` в соответствии со своим окружением:
@@ -24,7 +30,12 @@ $ cp .onec.env.example .onec.env
 Затем экспортируйте все необходимые переменные:
 
 ```bash
+# для Linux
 $ eval $(cat .onec.env)
+```
+```batch
+:: для Windows
+env.bat
 ```
 
 ## Как сбилдить образы
