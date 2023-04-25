@@ -1,5 +1,5 @@
-ARG DOCKER_USERNAME
-FROM ${DOCKER_USERNAME}/oscript:1.0.21
+ARG DOCKER_REGISTRY_URL
+FROM ${DOCKER_REGISTRY_URL}/oscript:1.0.21
 LABEL maintainer="Anton Kvashenkin <anton.jugatsu@gmail.com> (@jugatsu)"
 
 ARG runner_ver=1.7.0

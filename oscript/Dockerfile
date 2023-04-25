@@ -1,8 +1,8 @@
-ARG DOCKER_USERNAME=library
+ARG DOCKER_REGISTRY_URL=library
 ARG BASE_IMAGE=debian
 ARG BASE_TAG=bullseye-slim
 
-FROM ${DOCKER_USERNAME}/${BASE_IMAGE}:${BASE_TAG}
+FROM ${DOCKER_REGISTRY_URL}/${BASE_IMAGE}:${BASE_TAG}
 
 # Installing mono and oscript dependencies
 ARG MONO_VERSION=6.12.0.122

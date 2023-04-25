@@ -1,6 +1,6 @@
 @echo off
 
-docker login -u %DOCKER_LOGIN% -p %DOCKER_PASSWORD% %DOCKER_USERNAME%
+docker login -u %DOCKER_LOGIN% -p %DOCKER_PASSWORD% %DOCKER_REGISTRY_URL%
 
 if %ERRORLEVEL% neq 0 goto end
 
@@ -12,26 +12,26 @@ if %NO_CACHE%=="true" (SET last_arg="--no-cache .") else (SET last_arg=".")
 
 docker build ^
 	--pull ^
-	--build-arg DOCKER_USERNAME=%DOCKER_USERNAME% ^
+	--build-arg DOCKER_REGISTRY_URL=%DOCKER_REGISTRY_URL% ^
     --build-arg BASE_IMAGE=onec-client-vnc ^
     --build-arg BASE_TAG=%ONEC_VERSION% ^
-    -t %DOCKER_USERNAME%/onec-client-vnc-oscript:%ONEC_VERSION% ^
+    -t %DOCKER_REGISTRY_URL%/onec-client-vnc-oscript:%ONEC_VERSION% ^
     -f oscript/Dockerfile ^
     %last_arg%
 
 if %ERRORLEVEL% neq 0 goto end
 
 docker build ^
-    --build-arg DOCKER_USERNAME=%DOCKER_USERNAME% ^
+    --build-arg DOCKER_REGISTRY_URL=%DOCKER_REGISTRY_URL% ^
     --build-arg BASE_IMAGE=oscript-jdk ^
     --build-arg BASE_TAG=latest ^
-    -t %DOCKER_USERNAME%/base-jenkins-agent:latest ^
-    -f jenkins-agent/Dockerfile ^
+    -t %DOCKER_REGISTRY_URL%/base-jenkins-agent:latest ^
+    -f swarm-jenkins-agent/Dockerfile ^
     %last_arg%
 
 if %ERRORLEVEL% neq 0 goto end
 
-docker push %DOCKER_USERNAME%/base-jenkins-agent:latest
+docker push %DOCKER_REGISTRY_URL%/base-jenkins-agent:latest
 
 if %ERRORLEVEL% neq 0 goto end
 
