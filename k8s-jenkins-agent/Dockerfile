@@ -46,7 +46,7 @@ RUN curl --create-dirs -sSLo /usr/share/jenkins/slave.jar https://repo.jenkins-c
     && chmod 644 /usr/share/jenkins/slave.jar \
     && chown jenkins:jenkins /usr/share/jenkins/slave.jar
 
-COPY ./jenkins-agent/jenkins-agent /usr/local/bin/jenkins-agent
+COPY ./k8s-jenkins-agent/jenkins-agent /usr/local/bin/jenkins-agent
 RUN chmod +x /usr/local/bin/jenkins-agent \
     && chown jenkins:jenkins /usr/local/bin/jenkins-agent \
     && ln -s /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave
@@ -63,7 +63,7 @@ VOLUME /home/jenkins/agent
 
 WORKDIR /home/jenkins/agent
 
-COPY ./jenkins-agent/docker-entrypoint.sh /
+COPY ./k8s-jenkins-agent/docker-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh \
     && chmod +x /docker-entrypoint.sh
 
