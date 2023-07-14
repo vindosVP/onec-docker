@@ -25,7 +25,7 @@ RUN set -xe \
 
 ENV LANG ru_RU.UTF-8
 
-COPY ./jenkins-agent/docker-entrypoint.sh /
+COPY ./swarm-jenkins-agent/docker-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh \
   && chmod +x /docker-entrypoint.sh
 
