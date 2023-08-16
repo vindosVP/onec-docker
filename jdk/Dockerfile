@@ -7,7 +7,7 @@ FROM ${DOCKER_USERNAME}/${BASE_IMAGE}:${BASE_TAG}
 LABEL maintainer="Nikita Gryzlov <NikGryzlov@1bit.com>, FirstBit"
 
 # Install OpenJDK
-ARG TEMURINJDK_VERSION=17
+ARG OPENJDK_VERSION=17
 
 RUN apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
