@@ -28,7 +28,7 @@ docker build \
     --build-arg BASE_IMAGE=oscript-jdk \
     --build-arg BASE_TAG=latest \
     -t $DOCKER_REGISTRY_URL/oscript-agent:latest \
-	-f swarm-jenkins-agent/Dockerfile \
+	-f k8s-jenkins-agent/Dockerfile \
     $last_arg
 
 docker push $DOCKER_REGISTRY_URL/oscript-agent:latest

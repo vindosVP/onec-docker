@@ -1,8 +1,8 @@
-ARG DOCKER_USERNAME=library
-ARG BASE_IMAGE=adoptopenjdk
-ARG BASE_TAG=14-hotspot
+ARG DOCKER_REGISTRY_URL=library
+ARG BASE_IMAGE=eclipse-temurin
+ARG BASE_TAG=11
 
-FROM ${DOCKER_USERNAME}/${BASE_IMAGE}:${BASE_TAG}
+FROM ${DOCKER_REGISTRY_URL}/${BASE_IMAGE}:${BASE_TAG}
 
 LABEL maintainer="Nikita Gryzlov <NikGryzlov@1bit.com>, FirstBit"
 

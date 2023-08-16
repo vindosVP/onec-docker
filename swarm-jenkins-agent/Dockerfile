@@ -1,8 +1,8 @@
-ARG DOCKER_USERNAME
+ARG DOCKER_REGISTRY_URL
 ARG BASE_IMAGE
 ARG BASE_TAG
 
-FROM ${DOCKER_USERNAME}/${BASE_IMAGE}:${BASE_TAG}
+FROM ${DOCKER_REGISTRY_URL}/${BASE_IMAGE}:${BASE_TAG}
 
 LABEL maintainer="Nikita Gryzlov <NikGryzlov@1bit.com>, FirstBit"
 
@@ -25,7 +25,7 @@ RUN set -xe \
 
 ENV LANG ru_RU.UTF-8
 
-COPY ./jenkins-agent/docker-entrypoint.sh /
+COPY ./swarm-jenkins-agent/docker-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh \
   && chmod +x /docker-entrypoint.sh
 
