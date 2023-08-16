@@ -66,8 +66,8 @@ env.bat
 1. Если вам нужны образы для использования в docker-swarm:
 
     * build-base-swarm-jenkins-agent.sh
-    * build-edt-agent.sh
-    * build-oscript-agent.sh
+    * build-edt-swarm-agent.sh
+    * build-oscript-swarm-agent.sh
 2. Если же вы планируете использовать k8s
     * build-base-k8s-jenkins-agent.sh
     * build-edt-k8s-agent.sh
