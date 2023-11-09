@@ -21,8 +21,8 @@ fi
 ONEC_RELEASE=`echo $ONEC_VERSION | cut -d . -f 3`
 echo "Release: "$ONEC_RELEASE
 
-echo "Downloading Oneget tool from https://github.com/v8platform/oneget"
-curl -L -o oneget.tar.gz https://github.com/v8platform/oneget/releases/latest/download/oneget_Linux_x86_64.tar.gz \
+echo "Downloading Oneget tool from https://github.com/firstBitMarksistskaya/oneget"
+curl -L -o oneget.tar.gz https://github.com/firstBitMarksistskaya/oneget/releases/latest/download/oneget_Linux_x86_64.tar.gz \
    && mkdir /tmp/oneget_tool \
    && tar xzf oneget.tar.gz -C /tmp/oneget_tool \
    && rm oneget.tar.gz
