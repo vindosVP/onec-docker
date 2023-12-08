@@ -13,21 +13,36 @@ RUN chmod +x /download.sh
 ARG ONEC_USERNAME
 ARG ONEC_PASSWORD
 ARG ONEC_VERSION
-ARG DISTR_FILTER="Сервер 1С:Предприятия \(64\-bit\) для DEB-based Linux-систем$|Технологическая платформа 1С:Предприятия \(64\-bit\) для Linux$"
-ENV downloads=downloads/platform83/${ONEC_VERSION}
+
 WORKDIR /tmp
-RUN /download.sh $ONEC_USERNAME $ONEC_PASSWORD $ONEC_VERSION $downloads $DISTR_FILTER
+
+# Установка необходимых пакетов и генерация локали
+RUN apt-get update \
+  && apt-get install -y \
+          locales \
+          p7zip-rar \
+          p7zip-full \
+  && rm -rf /var/lib/apt/lists/* \
+  && locale-gen ru_RU.UTF-8 \
+  && localedef -i ru_RU -c -f UTF-8 -A /usr/share/locale/locale.alias ru_RU.UTF-8
+
+# Установка переменных окружения для корректной работы локали
+ENV LANG ru_RU.UTF-8
+ENV LANGUAGE ru_RU:ru
+ENV LC_ALL ru_RU.UTF-8
+
+RUN /download.sh "$ONEC_USERNAME" "$ONEC_PASSWORD" "$ONEC_VERSION" "server"
 
 # Начало основной стадии сборки
 FROM ubuntu:20.04 as installer
 
 # Копируем скрипты и файлы установки
 ARG ONEC_VERSION
-ENV installer_type=server
 ARG gosu_ver=1.11
 ARG nls_enabled=false
 ENV nls=$nls_enabled
-ENV distrPath=/tmp/downloads/platform83/${ONEC_VERSION}
+ENV distrPath=/tmp/downloads/Platform83/${ONEC_VERSION}
+ENV installer_type=server
 
 # Установка зависимостей и настройка локали
 RUN apt-get update \

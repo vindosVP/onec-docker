@@ -2,45 +2,37 @@
 
 # Установка из .deb пакетов
 install_from_deb() {
-    local deb_components=""
 
     case "$installer_type" in
       server)
         if [ "$nls" = true ]; then
-            deb_components="1c-enterprise*-{common,server}*.deb"
+            dpkg -i 1c-enterprise*-{common,server}*.deb
         else
-            deb_components="1c-enterprise*-{common,server}_*.deb"
+            dpkg -i 1c-enterprise*-{common,server}_*.deb
         fi
         ;;
       server_crs)
         if [ "$nls" = true ]; then
-            deb_components="1c-enterprise*-{common,server,ws,crs}*.deb"
+            dpkg -i "1c-enterprise*-{common,server,ws,crs}*.deb"
         else
-            deb_components="1c-enterprise*-{common,server,ws,crs}_*.deb"
+            dpkg -i "1c-enterprise*-{common,server,ws,crs}_*.deb"
         fi
       ;;  
       client)
         if [ "$nls" = true ]; then
-            deb_components="1c-enterprise*-{common,server,client}*.deb"
+            dpkg -i "1c-enterprise*-{common,server,client}*.deb"
         else
-            deb_components="1c-enterprise*-{common,server,client}_*.deb"
+            dpkg -i "1c-enterprise*-{common,server,client}_*.deb"
         fi
         ;;
       thin-client)
         if [ "$nls" = true ]; then
-            deb_components="1c-enterprise83-thin-client*.deb"
+            dpkg -i "1c-enterprise83-thin-client*.deb"
         else
-            deb_components="1c-enterprise83-thin-client_*.deb"
+            dpkg -i "1c-enterprise83-thin-client_*.deb"
         fi
         ;;
     esac
-
-    if [ -n "$deb_components" ]; then
-        dpkg -i $deb_components
-    else
-        echo "Не указаны компоненты для установки"
-        exit 1
-    fi
 }
 # Установка из .run файла
 install_from_run() {

@@ -18,12 +18,12 @@ docker build \
 	--build-arg DOCKER_REGISTRY_URL=library \
     --build-arg BASE_IMAGE=ubuntu \
     --build-arg BASE_TAG=20.04 \
+    --build-arg ONESCRIPT_PACKAGES="yard" \
     -t $DOCKER_REGISTRY_URL/oscript-downloader:latest \
 	-f oscript/Dockerfile \
     $last_arg
 
 docker build \
-    --pull \
     --build-arg ONEC_USERNAME=$ONEC_USERNAME \
     --build-arg ONEC_PASSWORD=$ONEC_PASSWORD \
     --build-arg ONEC_VERSION=$ONEC_VERSION \
