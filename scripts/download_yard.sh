@@ -5,7 +5,14 @@ ONEC_USERNAME=$1
 ONEC_PASSWORD=$2
 ONEC_VERSION=$3
 installer_type=$4
-DOWNLOADS_PATH=/tmp/downloads/Platform83/${ONEC_VERSION}
+
+if [ "$installer_type" = "edt" ]; then
+    FOLDER_NAME="developmenttools10"
+else
+    FOLDER_NAME="Platform83"
+fi
+
+DOWNLOADS_PATH=/tmp/downloads/${FOLDER_NAME}/${ONEC_VERSION}
 
 
 # Преобразование версии для различных целей

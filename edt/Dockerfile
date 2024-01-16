@@ -1,20 +1,44 @@
-ARG DOCKER_REGISTRY_URL=library
+# Используем базовый образ для скачивания
+ARG DOCKER_REGISTRY_URL
+ARG DOWNLOADER_IMAGE
+ARG DOWNLOADER_TAG
+FROM ${DOCKER_REGISTRY_URL}/${BASE_IMAGE}:${BASE_TAG} AS downloader
+
+# Копирование скрипта скачивания и локальных дистрибутивов
+COPY ./scripts/download_yard.sh /download.sh
+COPY ./distr /distr
+RUN chmod +x /download.sh
+
+# Скачивание дистрибутива 1С с использованием вынесенного скрипта
+ARG ONEC_USERNAME
+ARG ONEC_PASSWORD
+ARG EDT_VERSION=2021.3
+
+WORKDIR /tmp
+
+# Установка необходимых пакетов и генерация локали
+RUN apt-get update \
+  && apt-get install -y \
+          locales \
+          p7zip-rar \
+          p7zip-full \
+  && rm -rf /var/lib/apt/lists/* \
+  && locale-gen ru_RU.UTF-8 \
+  && localedef -i ru_RU -c -f UTF-8 -A /usr/share/locale/locale.alias ru_RU.UTF-8
+
+# Установка переменных окружения для корректной работы локали
+ENV LANG ru_RU.UTF-8
+ENV LANGUAGE ru_RU:ru
+ENV LC_ALL ru_RU.UTF-8
+
+RUN /download.sh "$ONEC_USERNAME" "$ONEC_PASSWORD" "$EDT_VERSION" "edt"
+
 ARG BASE_IMAGE=eclipse-temurin
 ARG BASE_TAG=11
 
 FROM ${DOCKER_REGISTRY_URL}/${BASE_IMAGE}:${BASE_TAG}
 
 LABEL maintainer="Nikita Gryzlov <NikGryzlov@1bit.com>, FirstBit"
-
-ARG ONEC_USERNAME
-ARG ONEC_PASSWORD
-ARG EDT_VERSION=2021.3
-
-ENV installer_type=edt \
-  ONEC_VERSION=${EDT_VERSION}
-
-COPY ./scripts/download_og.sh /download_og.sh
-
 
 WORKDIR /tmp
 
@@ -35,19 +59,8 @@ ARG downloads=downloads/developmenttools10/${ONEC_VERSION}
 ENV LANG ru_RU.UTF-8
 
 # Install EDT
-COPY ./distr ./${downloads}
-RUN rm ./${downloads}/.gitkeep \
-  && rm -rf ${downloads}/server*.tar.gz \
-  && rm -rf ${downloads}/deb*.tar.gz \
-  && rm -rf ${downloads}/thin.client*.tar.gz \
-  && if [ -z "$(ls -A ${downloads})" ]; then \
-  chmod +x /download_og.sh \
-  && sync; /download_og.sh; \
-  fi \
-  && ls ${downloads} \
-  && for file in ${downloads}/*.tar.gz; do tar -zxf "$file"; done \
-  && rm -rf ${downloads}/*.tar.gz \
-  && ./1ce-installer-cli install all --ignore-hardware-checks \
+COPY --from=base ./distr ./${downloads}
+RUN ./1ce-installer-cli install all --ignore-hardware-checks \
   && rm -rf /tmp/* \
   && mv $(dirname $(find /opt/1C/1CE -name ring)) /opt/1C/1CE/components/1c-enterprise-ring
 
