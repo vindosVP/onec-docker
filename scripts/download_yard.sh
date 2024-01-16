@@ -7,7 +7,7 @@ ONEC_VERSION=$3
 installer_type=$4
 
 if [ "$installer_type" = "edt" ]; then
-    FOLDER_NAME="developmenttools10"
+    FOLDER_NAME="DevelopmentTools10"
 else
     FOLDER_NAME="Platform83"
 fi
@@ -20,65 +20,91 @@ ONEC_VERSION_DOTS=$ONEC_VERSION
 ONEC_VERSION_UNDERSCORES=$(echo $ONEC_VERSION_DOTS | sed 's/\./\_/g')
 ESCAPED_VERSION=$(echo $ONEC_VERSION_DOTS | sed 's/\./\\./g')
 
-check_local_distr() {
+# Поищем дистрибутив в папке distr и если он есть скопируем его куда надо и распакуем
+copy_distr_to_downloads_path() {
+  found=1
   case "$installer_type" in
-    edt)
-        local edt_pattern="1c_edt_distr_offline_${ONEC_VERSION}_*_linux_x86_64.tar.gz"
-        # Ищем файлы, соответствующие шаблону
-        local matching_files=($(ls /distr/$edt_pattern 2> /dev/null))
-        if [ ${#matching_files[@]} -gt 0 ]; then
-            local edt_filename=${matching_files[0]}
-            echo "Найден локальный дистрибутив: $edt_filename"
-            cp "/distr/$edt_filename" $DOWNLOADS_PATH/
-            return 0
-        fi
-        ;;
-    server)
-        local file_name_srv="deb64_$ONEC_VERSION_UNDERSCORES.tar.gz"
-        local file_name_platform="server64_$ONEC_VERSION_UNDERSCORES.tar.gz"
+      edt)
+          local edt_pattern="1c_edt_distr_offline_${ONEC_VERSION}_*_linux_x86_64.tar.gz"
+          # Ищем файлы, соответствующие шаблону
+          local matching_files=($(ls /distr/$edt_pattern 2> /dev/null))
+          if [ ${#matching_files[@]} -gt 0 ]; then
+              local edt_filename=${matching_files[0]}
+              echo "Найден локальный дистрибутив: $edt_filename"
+              cp $edt_filename $DOWNLOADS_PATH/
+              found=0
+          else
+              echo "Локального дистрибутива edt не найдено в папке distr"    
+          fi
+          ;;
+      server)
+          local file_name_srv="deb64_$ONEC_VERSION_UNDERSCORES.tar.gz"
+          local file_name_platform="server64_$ONEC_VERSION_UNDERSCORES.tar.gz"
 
-        if [ -f "/distr/$file_name_srv" ]; then
-          echo "Найден локальный дистрибутив: $file_name_srv"
-          cp "/distr/$file_name_srv" $DOWNLOADS_PATH/
-          return 0
-        elif [ -f "/distr/$file_name_platform" ]; then
-          echo "Найден локальный дистрибутив: $file_name_platform"
-          cp "/distr/$file_name_platform" $DOWNLOADS_PATH/
-          return 0
-        fi
-        ;;
-    server32)
-        local file_name_srv="deb_$ONEC_VERSION_UNDERSCORES.tar.gz"
-        local file_name_platform="server32_$ONEC_VERSION_UNDERSCORES.tar.gz"
+          if [ -f "/distr/$file_name_srv" ]; then
+            echo "Найден локальный дистрибутив: $file_name_srv"
+            cp $file_name_srv $DOWNLOADS_PATH/
+            found=0
+          elif [ -f "/distr/$file_name_platform" ]; then
+            echo "Найден локальный дистрибутив: $file_name_platform"
+            cp $file_name_platform $DOWNLOADS_PATH/
+            found=0
+          fi
+          ;;
+      server32)
+          local file_name_srv="deb_$ONEC_VERSION_UNDERSCORES.tar.gz"
+          local file_name_platform="server32_$ONEC_VERSION_UNDERSCORES.tar.gz"
 
-        if [ -f "/distr/$file_name_srv" ]; then
-          echo "Найден локальный дистрибутив: $file_name_srv"
-          cp "/distr/$file_name_srv" $DOWNLOADS_PATH/
-          return 0
-        elif [ -f "/distr/$file_name_platform" ]; then
-          echo "Найден локальный дистрибутив: $file_name_platform"
-          cp "/distr/$file_name_platform" $DOWNLOADS_PATH/
-          return 0
-        fi
-        ;;
-    client)
-        local file_name_deb="client_$ONEC_VERSION_UNDERSCORES.deb64.tar.gz"
-        local file_name_platform="server64_$ONEC_VERSION_UNDERSCORES.tar.gz"
+          if [ -f "/distr/$file_name_srv" ]; then
+            echo "Найден локальный дистрибутив: $file_name_srv"
+            cp $file_name_srv $DOWNLOADS_PATH/
+            found=0
+          elif [ -f "/distr/$file_name_platform" ]; then
+            echo "Найден локальный дистрибутив: $file_name_platform"
+            cp $file_name_platform $DOWNLOADS_PATH/
+            found=0
+          fi
+          ;;
+      client)
+          local file_name_deb="client_$ONEC_VERSION_UNDERSCORES.deb64.tar.gz"
+          local file_name_platform="server64_$ONEC_VERSION_UNDERSCORES.tar.gz"
 
-        if [ -f "/distr/$file_name_deb" ]; then
-          echo "Найден локальный дистрибутив: $file_name_deb"
-          cp "/distr/$file_name_deb" $DOWNLOADS_PATH/
-          return 0
-        elif [ -f "/distr/$file_name_platform" ]; then
-          echo "Найден локальный дистрибутив: $file_name_platform"
-          cp "/distr/$file_name_platform" $DOWNLOADS_PATH/
-          return 0
-        fi
-        ;;
+          if [ -f "/distr/$file_name_deb" ]; then
+            echo "Найден локальный дистрибутив: $file_name_deb"
+            cp $file_name_deb $DOWNLOADS_PATH/
+            found=0
+          elif [ -f "/distr/$file_name_platform" ]; then
+            echo "Найден локальный дистрибутив: $file_name_platform"
+            cp $file_name_platform $DOWNLOADS_PATH/
+            found=0
+          fi
+          ;;
   esac
 
+  if [ $found -eq 0 ]; then
+    # Распаковка скачанных файлов (если такие есть)
+    for file in $DOWNLOADS_PATH/*.tar.gz; do
+      tar -xzf "$file" -C $DOWNLOADS_PATH
+      rm -f "$file"
+    done
+  fi
 
-  return 1
+  return $found
+}
+
+
+check_local_distr() {
+
+  copy_distr_to_downloads_path
+  found=$?
+
+  if [ $found -ne 0 ]; then
+    return $found
+  fi
+
+  check_file
+  local_distr_found=$?
+  return $local_distr_found
 }
 
 # Функция для скачивания дистрибутива
@@ -92,6 +118,29 @@ download_distr() {
     --path /tmp/downloads \
     --distr-filter "$distr_filter" \
     --download-limit 1
+}
+
+# Функция проверки наличия нужных файлов после распаковки
+check_file() {
+  found=1
+  # Проверяем, появились ли файлы в каталоге
+    if [ "$installer_type" = "edt" ]; then
+        # Для edt проверяем наличие специфичного файла
+        if ls $DOWNLOADS_PATH/1ce-installer-cli 1> /dev/null 2>&1; then
+            echo "Дистрибутив найден и скачан: $filter"
+            found=0
+        else
+            echo "Не найден файл 1ce-installer-cli"
+            echo "Содержимое каталога $DOWNLOADS_PATH:"
+            ls -l $DOWNLOADS_PATH 
+        fi
+    elif ls $DOWNLOADS_PATH/*.deb 1> /dev/null 2>&1 || ls $DOWNLOADS_PATH/*.run 1> /dev/null 2>&1; then
+        echo "Дистрибутив найден и скачан: $filter"
+        found=0
+    else
+        echo "Не найден дистрибутив по шаблону: $filter"
+    fi
+    return $found
 }
 
 # Попытка скачивания дистрибутива для каждого фильтра
@@ -132,21 +181,18 @@ try_download() {
   esac
 
   echo $DISTR_FILTERS
-  local found=1
+  local download_success=1
   IFS='|'
   read -ra FILTERS <<< "$DISTR_FILTERS"
   for filter in "${FILTERS[@]}"; do
     download_distr "$filter"
-    # Проверяем, появились ли файлы в каталоге
-    if ls $DOWNLOADS_PATH/*.deb 1> /dev/null 2>&1 || ls $DOWNLOADS_PATH/*.run 1> /dev/null 2>&1; then
-      echo "Дистрибутив найден и скачан: $filter"
-      found=0
+    check_file
+    download_success=$?
+    if [ $download_success -eq 0 ]; then
       break
-    else
-      echo "Не найден дистрибутив по шаблону: $filter"
     fi
   done
-  return $found
+  return $download_success
 }
 
 # Удаление ненужных файлов
@@ -167,9 +213,3 @@ if [ $local_distr_found -ne 0 ]; then
     exit 1
   fi
 fi
-
-# Распаковка скачанных файлов (если такие есть)
-for file in $DOWNLOADS_PATH/*.tar.gz; do
-  tar -xzf "$file" -C $DOWNLOADS_PATH
-  rm -f "$file"
-done

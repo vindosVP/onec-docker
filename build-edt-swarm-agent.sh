@@ -27,10 +27,10 @@ docker build \
     $last_arg
 
 docker build \
-    --pull \
     --build-arg ONEC_USERNAME=$ONEC_USERNAME \
     --build-arg ONEC_PASSWORD=$ONEC_PASSWORD \
     --build-arg EDT_VERSION="$EDT_VERSION" \
+    --build-arg DOWNLOADER_REGISTRY_URL=$DOCKER_REGISTRY_URL \
     --build-arg DOWNLOADER_IMAGE=oscript-downloader \
     --build-arg DOWNLOADER_TAG=latest \
     -t $DOCKER_REGISTRY_URL/edt:$edt_escaped \
