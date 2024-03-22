@@ -206,9 +206,11 @@ local_distr_found=$?
 
 if [ $local_distr_found -ne 0 ]; then
   echo "Скачаных дистрибутивов не найдено. Попытаемся скачать через yard."
-  if [ "$ONEC_VERSION" = "8.3.24.1342" && "$ONEC_VERSION" = "8.3.24.1368"]; then
+  if [ "$ONEC_VERSION" = "8.3.24.1342" ] || [ "$ONEC_VERSION" = "8.3.24.1368" ]; then
     echo "Ошибка: Скачивание версии 8.3.24.1342 и 8.3.24.1368 не поддерживается. Скачайте и распакуйте релиз самостоятельно, и поместите его в папку distr"
     exit 1
+  else
+    echo "Версия 1с: $ONEC_VERSION" 
   fi
   try_download
   download_attempted=$?
