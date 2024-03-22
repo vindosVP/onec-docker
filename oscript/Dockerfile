@@ -54,9 +54,11 @@ ENV PATH="$OSCRIPTBIN:$PATH"
 RUN opm install opm \
   && opm update --all \
   && opm install ${ONESCRIPT_PACKAGES} \
-  && gitsync plugins init \
-  && gitsync plugins enable limit \
-  && gitsync plugins disable limit
+  && if echo "$ONESCRIPT_PACKAGES" | grep -q "gitsync"; then \
+       gitsync plugins init \
+       && gitsync plugins enable limit \
+       && gitsync plugins disable limit; \
+     fi
 
 COPY ./oscript/docker-entrypoint.sh /
 RUN chmod 755 /docker-entrypoint.sh \
