@@ -23,6 +23,7 @@ ESCAPED_VERSION=$(echo $ONEC_VERSION_DOTS | sed 's/\./\\./g')
 # Поищем дистрибутив в папке distr и если он есть скопируем его куда надо и распакуем
 copy_distr_to_downloads_path() {
   found=1
+  found_run_file=0
   case "$installer_type" in
       edt)
           local edt_pattern="1c_edt_distr_offline_${ONEC_VERSION}_*_linux_x86_64.tar.gz"
@@ -34,21 +35,27 @@ copy_distr_to_downloads_path() {
               cp $edt_filename $DOWNLOADS_PATH/
               found=0
           else
-              echo "Локального дистрибутива edt не найдено в папке distr"    
+              echo "Локального дистрибутива edt не найдено в папке distr"
           fi
           ;;
       server)
           local file_name_srv="deb64_$ONEC_VERSION_UNDERSCORES.tar.gz"
           local file_name_platform="server64_$ONEC_VERSION_UNDERSCORES.tar.gz"
+          local file_name_run="setup-full-$ONEC_VERSION_DOTS-x86_64.run"
 
           if [ -f "/distr/$file_name_srv" ]; then
             echo "Найден локальный дистрибутив: $file_name_srv"
-            cp $file_name_srv $DOWNLOADS_PATH/
+            cp /distr/$file_name_srv $DOWNLOADS_PATH/
             found=0
           elif [ -f "/distr/$file_name_platform" ]; then
             echo "Найден локальный дистрибутив: $file_name_platform"
-            cp $file_name_platform $DOWNLOADS_PATH/
+            cp /distr/$file_name_platform $DOWNLOADS_PATH/
             found=0
+          elif [ -f "/distr/$file_name_run" ]; then
+            echo "Найден локальный дистрибутив: $file_name_run"
+            cp /distr/$file_name_run $DOWNLOADS_PATH/
+            found=0
+            found_run_file=1
           fi
           ;;
       server32)
@@ -57,31 +64,37 @@ copy_distr_to_downloads_path() {
 
           if [ -f "/distr/$file_name_srv" ]; then
             echo "Найден локальный дистрибутив: $file_name_srv"
-            cp $file_name_srv $DOWNLOADS_PATH/
+            cp /distr/$file_name_srv $DOWNLOADS_PATH/
             found=0
           elif [ -f "/distr/$file_name_platform" ]; then
             echo "Найден локальный дистрибутив: $file_name_platform"
-            cp $file_name_platform $DOWNLOADS_PATH/
+            cp /distr/$file_name_platform $DOWNLOADS_PATH/
             found=0
           fi
           ;;
       client)
           local file_name_deb="client_$ONEC_VERSION_UNDERSCORES.deb64.tar.gz"
           local file_name_platform="server64_$ONEC_VERSION_UNDERSCORES.tar.gz"
+          local file_name_run="setup-full-$ONEC_VERSION_DOTS-x86_64.run"
 
           if [ -f "/distr/$file_name_deb" ]; then
             echo "Найден локальный дистрибутив: $file_name_deb"
-            cp $file_name_deb $DOWNLOADS_PATH/
+            cp /distr/$file_name_deb $DOWNLOADS_PATH/
             found=0
           elif [ -f "/distr/$file_name_platform" ]; then
             echo "Найден локальный дистрибутив: $file_name_platform"
-            cp $file_name_platform $DOWNLOADS_PATH/
+            cp /distr/$file_name_platform $DOWNLOADS_PATH/
             found=0
+          elif [ -f "/distr/$file_name_run" ]; then
+            echo "Найден локальный дистрибутив: $file_name_run"
+            cp /distr/$file_name_run $DOWNLOADS_PATH/
+            found=0
+            found_run_file=1
           fi
           ;;
   esac
 
-  if [ $found -eq 0 ]; then
+  if [ $found -eq 0 ] && [ $found_run_file -eq 0 ] ; then
     # Распаковка скачанных файлов (если такие есть)
     for file in $DOWNLOADS_PATH/*.tar.gz; do
       tar -xzf "$file" -C $DOWNLOADS_PATH
