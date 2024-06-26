@@ -23,7 +23,7 @@ ESCAPED_VERSION=$(echo $ONEC_VERSION_DOTS | sed 's/\./\\./g')
 # Поищем дистрибутив в папке distr и если он есть скопируем его куда надо и распакуем
 copy_distr_to_downloads_path() {
   found=1
-  found_run_file=0
+  found_run_file=1
   case "$installer_type" in
       edt)
           local edt_pattern="1c_edt_distr_offline_${ONEC_VERSION}_*_linux_x86_64.tar.gz"
@@ -55,7 +55,7 @@ copy_distr_to_downloads_path() {
             echo "Найден локальный дистрибутив: $file_name_run"
             cp /distr/$file_name_run $DOWNLOADS_PATH/
             found=0
-            found_run_file=1
+            found_run_file=0
           fi
           ;;
       server32)
@@ -89,12 +89,12 @@ copy_distr_to_downloads_path() {
             echo "Найден локальный дистрибутив: $file_name_run"
             cp /distr/$file_name_run $DOWNLOADS_PATH/
             found=0
-            found_run_file=1
+            found_run_file=0
           fi
           ;;
   esac
 
-  if [ $found -eq 0 ] && [ $found_run_file -eq 0 ] ; then
+  if [ $found -eq 0 ] && [ $found_run_file -eq 1 ] ; then
     # Распаковка скачанных файлов (если такие есть)
     for file in $DOWNLOADS_PATH/*.tar.gz; do
       tar -xzf "$file" -C $DOWNLOADS_PATH
