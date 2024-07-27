@@ -152,7 +152,7 @@ try_download() {
     edt)
         echo "Скачиваем дистрибутив EDT"
         APP_FILTER="1C:Enterprise Development Tools"
-        DISTR_FILTERS="Дистрибутив для оффлайн установки 1C:EDT для ОС Linux 64 бит"
+        DISTR_FILTERS="Дистрибутив для оффлайн установки 1C:EDT для ОС Linux 64 бит|Дистрибутив 1C:EDT для ОС Linux для установки без интернета"
         ;;
     server)
         echo "Скачиваем дистрибутив для установки 64-битного сервера"
