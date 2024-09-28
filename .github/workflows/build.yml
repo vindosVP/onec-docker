@@ -22,4 +22,4 @@ jobs:
 
     - name: Build Docker images
       run: |
-        docker build -t oscript:latest oscript
+        docker build -t oscript:latest -f oscript/Dockerfile .
