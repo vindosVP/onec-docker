@@ -5,13 +5,14 @@ on:
     branches: [ feature/first-bit]
   pull_request:
     branches: [ feature/first-bit]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy: 
       matrix:
-        dir: [ 'oscript' ]
+        dir: [ 'jdk', 'oscript' ]
 
     steps:
     - name: Checkout repository
