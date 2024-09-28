@@ -1,0 +1,29 @@
+name: Build Docker Images
+
+on:
+  push:
+    branches: [ feature/first-bit]
+  pull_request:
+    branches: [ feature/first-bit]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        dir: [ 'jdk', 'oscript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker images
+      run: |
+        docker build -t oscript:latest -f ${{ matrix.dir }}/Dockerfile .
