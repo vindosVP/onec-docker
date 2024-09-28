@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        dir: [ 'oscript' ]
 
     steps:
     - name: Checkout repository
@@ -22,4 +25,4 @@ jobs:
 
     - name: Build Docker images
       run: |
-        docker build -t oscript:latest -f oscript/Dockerfile .
+        docker build -t oscript:latest -f ${{ matrix.dir }}/Dockerfile .
