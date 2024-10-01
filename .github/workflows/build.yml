@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy: 
+      matrix:
+        script: [ 'build-base-k8s-jenkins-agent.sh', 'build-base-k8s-jenkins-agent.sh', 'build-crs.sh', 'build-edt-k8s-agent.sh', 'build-edt-swarm-agent.sh', 'build-oscript-k8s-agent.sh', 'build-oscript-swarm-agent.sh', 'build-server.sh' ]
 
     steps:
     - name: Checkout repository
@@ -28,8 +31,8 @@ jobs:
         DOCKER_PASSWORD: ""
         ONEC_USERNAME: ${{ secrets.ONEC_USERNAME}}
         ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD}}
-        ONEC_VERSION: '8.3.18.1520'
+        ONEC_VERSION: '8.3.24.1624'
       run: |
         docker run -d -p 5000:5000 --name registry registry:2
-        ./build-base-swarm-jenkins-agent.sh
+        ./${{ matrix.script }}
         
