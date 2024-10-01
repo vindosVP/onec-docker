@@ -10,9 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy: 
-      matrix:
-        dir: [ 'jdk', 'oscript' ]
 
     steps:
     - name: Checkout repository
@@ -25,5 +22,14 @@ jobs:
       uses: docker/setup-buildx-action@v2
 
     - name: Build Docker images
+      env:
+        DOCKER_REGISTRY_URL: 'localhost:5000'
+        DOCKER_LOGIN: ""
+        DOCKER_PASSWORD: ""
+        ONEC_USERNAME: ${{ secrets.ONEC_USERNAME}}
+        ONEC_PASSWORD: ${{ secrets.ONEC_PASSWORD}}
+        ONEC_VERSION: '8.3.18.1520'
       run: |
-        docker build -t oscript:latest -f ${{ matrix.dir }}/Dockerfile .
+        docker run -d -p 5000:5000 --name registry registry:2
+        ./build-base-swarm-jenkins-agent.sh
+        
