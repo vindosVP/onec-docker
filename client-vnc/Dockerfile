@@ -43,10 +43,11 @@ RUN apt-get update \
       libodbc1 \
       libtcmalloc-minimal4 \
       libmagickwand-6.q16-6 \
+      libwebkit2gtk-4.0-37 \
       at-spi2-core \
       procps \
       x11vnc \
-      iproute2\
+      iproute2 \
   # Install libpng12-0 from xenial
   && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 40976EAF437D05B5 \
   && echo "deb http://security.ubuntu.com/ubuntu xenial-security main" > /etc/apt/sources.list.d/xenial-security.list \
@@ -60,7 +61,6 @@ RUN apt-get update \
   && apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     libwebkitgtk-3.0-0 \
-    libwebkit2gtk-4.0-37 \
   && rm -rf  /etc/apt/sources.list.d/stretch.list \
   && apt-get update \
   && rm -rf  \
