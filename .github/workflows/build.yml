@@ -27,7 +27,6 @@ jobs:
     - name: Build Docker images
       env:
         DOCKER_REGISTRY_URL: 'localhost:5000'
-        DOWNLOADER_REGISTRY_URL: 'localhost:5000'
         DOCKER_LOGIN: ""
         DOCKER_PASSWORD: ""
         ONEC_USERNAME: ${{ secrets.ONEC_USERNAME}}
