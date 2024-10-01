@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD $DOCKER_REGISTRY_URL
+if [ $DOCKER_LOGIN != '' ] ; then
+    docker login -u $DOCKER_LOGIN -p $DOCKER_PASSWORD $DOCKER_REGISTRY_URL
+fi
 
 if [ $DOCKER_SYSTEM_PRUNE = 'true' ] ; then
     docker system prune -af
