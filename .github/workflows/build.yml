@@ -44,9 +44,21 @@ jobs:
       run: |
         docker run -d -p 5000:5000 --name registry registry:2
         ./${{ matrix.script }}
-    - name: Set Job Status
+    - name: Update PR Check Status
       if: always()
-      uses: s4u/set-job-status-action@v1
+      uses: actions/github-script@v6
       with:
-        status: ${{ job.status }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const conclusion = '${{ job.status }}' === 'success' ? 'success' : 'failure';
+          await github.rest.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'Build Workflow - ${{ matrix.script }}',
+            head_sha: '${{ github.event.workflow_run.head_sha }}',
+            status: 'completed',
+            conclusion,
+            output: {
+              title: 'Build Workflow - ${{ matrix.script }}',
+              summary: `Workflow for script '${{ matrix.script }}' completed with conclusion: ${conclusion}`
+            }
+          });
