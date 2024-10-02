@@ -21,7 +21,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         # Получаем рефы для pull-реквеста
         ref: ${{ github.event.workflow_run.head_branch }}
