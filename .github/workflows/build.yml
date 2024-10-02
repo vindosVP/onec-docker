@@ -6,6 +6,10 @@ on:
     types:
       - completed
 
+permissions:
+  checks: write
+  contents: read
+
 jobs:
   build:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -41,7 +45,8 @@ jobs:
         docker run -d -p 5000:5000 --name registry registry:2
         ./${{ matrix.script }}
     - name: Set Job Status
+      if: always()
       uses: s4u/set-job-status-action@v1
       with:
-        status: success # или 'failure'
+        status: ${{ job.status }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
