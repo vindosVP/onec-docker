@@ -26,6 +26,25 @@ jobs:
         # Получаем рефы для pull-реквеста
         ref: ${{ github.event.workflow_run.head_branch }}
 
+    - name: Create Check Run (Started)
+      uses: actions/github-script@v6
+      id: create_check_run
+      with:
+        script: |
+          const { data: checkRun } = await github.rest.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'Build Workflow - ${{ matrix.script }}',
+            head_sha: '${{ github.event.workflow_run.head_sha }}',
+            status: 'in_progress',
+            details_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
+            output: {
+              title: 'Build Started',
+              summary: 'Build has started.'
+            }
+          });
+          core.setOutput('check_run_id', checkRun.id);
+
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v2
 
@@ -44,21 +63,22 @@ jobs:
       run: |
         docker run -d -p 5000:5000 --name registry registry:2
         ./${{ matrix.script }}
-    - name: Update PR Check Status
+        
+    - name: Update PR Check Status (Completed)
       if: always()
       uses: actions/github-script@v6
       with:
         script: |
           const conclusion = '${{ job.status }}' === 'success' ? 'success' : 'failure';
-          await github.rest.checks.create({
+          await github.rest.checks.update({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            name: 'Build Workflow - ${{ matrix.script }}',
-            head_sha: '${{ github.event.workflow_run.head_sha }}',
+            check_run_id: ${{ steps.create_check_run.outputs.check_run_id }},
             status: 'completed',
             conclusion,
+            completed_at: new Date().toISOString(),
             output: {
-              title: 'Build Workflow - ${{ matrix.script }}',
+              title: 'Build ' + (conclusion === 'success' ? 'Succeeded' : 'Failed'),
               summary: `Workflow for script '${{ matrix.script }}' completed with conclusion: ${conclusion}`
             }
           });
