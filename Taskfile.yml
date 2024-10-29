@@ -1,0 +1,19 @@
+version: '3'
+
+tasks:
+  build-edt:
+    dotenv: ['build-edt.env']
+    cmds:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build --build-arg DOCKER_REGISTRY_URL=library --build-arg BASE_IMAGE=ubuntu --build-arg BASE_TAG=20.04 --build-arg ONESCRIPT_PACKAGES="yard" -t $DOCKER_REGISTRY_URL/oscript-downloader:latest -f oscript/Dockerfile .
+      - docker push $DOCKER_REGISTRY_URL/oscript-downloader:latest
+      - docker build --build-arg DOWNLOADER_REGISTRY_URL=$DOCKER_REGISTRY_URL --build-arg DOWNLOADER_IMAGE=oscript-downloader --build-arg DOWNLOADER_TAG=latest --build-arg ONEC_USERNAME=$ONEC_USERNAME --build-arg ONEC_PASSWORD=$ONEC_PASSWORD --build-arg EDT_VERSION="$EDT_VERSION" -t $DOCKER_REGISTRY_URL/edt-native:$EDT_VERSION -f edt/Dockerfile .
+      - docker push $DOCKER_REGISTRY_URL/edt-native:$EDT_VERSION
+      - docker build --build-arg BASE_IMAGE=edt-native --build-arg BASE_TAG=$EDT_VERSION --build-arg DOCKER_REGISTRY_URL=$DOCKER_REGISTRY_URL -t $DOCKER_REGISTRY_URL/edt:$EDT_VERSION -f edt-final/Dockerfile .
+      - docker push $DOCKER_REGISTRY_URL/edt:$EDT_VERSION
+  build-ripper:
+    dotenv: ['build-ripper.env']
+    cmds:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build --build-arg DOCKER_REGISTRY_URL=library --build-arg BASE_IMAGE=ubuntu --build-arg BASE_TAG=20.04 --build-arg ONESCRIPT_PACKAGES="edt-ripper" -t $DOCKER_REGISTRY_URL/oscript-ripper:latest -f oscript/Dockerfile .
+      - docker push $DOCKER_REGISTRY_URL/oscript-ripper:latest
